@@ -8,8 +8,10 @@ function main()
     let targetDir = process.cwd();
     
     // Parse arguments: --key=value format, or treat non-matching args as directory
-    for (const arg of args) {
-        if (!arg.startsWith('--')) {
+    for (const arg of args)
+    {
+        if (!arg.startsWith('--'))
+        {
             // This is the scanning directory
             targetDir = path.resolve(arg);
             break;

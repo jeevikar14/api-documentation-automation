@@ -1,18 +1,19 @@
-const path = require("path")
-const scanDirectory = require("./scanner")
-const generateDocs = require("./generator")
+const path = require("path");
+const scanDirectory = require("./scanner");
+const generateDocs = require("./generator");
 
-function main() {
-    const dirArg = process.argv[2]
-    const targetDir = dirArg ? path.resolve(dirArg) : process.cwd()
+function main()
+{
+    const dirArg = process.argv[2];
+    const targetDir = dirArg ? path.resolve(dirArg) : process.cwd();
 
-    console.log("Scanning directory:", targetDir)
+    console.log("Scanning directory:", targetDir);
 
-    const docs = scanDirectory(targetDir)
+    const docs = scanDirectory(targetDir);
 
-    console.log("OpenAPI blocks found:", docs.length)
+    console.log("OpenAPI blocks found:", docs.length);
 
-    generateDocs(docs)
+    generateDocs(docs);
 }
 
-main()
+main();

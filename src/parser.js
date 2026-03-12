@@ -1,25 +1,28 @@
-const fs = require("fs")
+const fs = require("fs");
 
-function parseFile(filePath) {
-    const content = fs.readFileSync(filePath, "utf8")
+function parseFile(filePath)
+{
+    const content = fs.readFileSync(filePath, "utf8");
 
-    const regex = /\/\*\*([\s\S]*?)\*\//g
+    const regex = /\/\*\*([\s\S]*?)\*\//g;
 
-    let match
-    const docs = []
+    let match;
+    const docs = [];
 
-    while ((match = regex.exec(content)) !== null) {
-        const block = match[1]
+    while ((match = regex.exec(content)) !== null)
+    {
+        const block = match[1];
 
-        if (block.includes("@openapi")) {
+        if (block.includes("@openapi"))
+        {
             docs.push({
                 file: filePath,
                 content: block.trim()
-            })
+            });
         }
     }
 
-    return docs
+    return docs;
 }
 
-module.exports = parseFile
+module.exports = parseFile;

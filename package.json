@@ -1,12 +1,16 @@
 {
-  "name": "api-doc-tool",
+  "name": "api-documentation-automation",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "DevOps tool for automating API documentation generation and contract validation by scanning Node.js services for OpenAPI JSDoc.",
+  "main": "src/cli.js",
+  "bin": {
+    "api-doc-tool": "src/cli.js"
+  },
   "scripts": {
+    "start": "node src/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["api", "documentation", "openapi", "jsdoc", "devops", "automation"],
   "author": "",
   "license": "ISC"
 }

@@ -3,8 +3,18 @@ const scanDirectory = require("./scanner")
 const generateDocs = require("./generator")
 
 function main() {
-    const dirArg = process.argv[2]
-    const targetDir = dirArg ? path.resolve(dirArg) : process.cwd()
+    const args = process.argv.slice(2)
+    let targetDir = process.cwd()
+    
+    // Parse arguments: --key=value format, or treat non-matching args as directory
+    for (const arg of args) {
+        if (!arg.startsWith('--')) {
+            // This is the scanning directory
+            targetDir = path.resolve(arg)
+            break
+        }
+        // Handle --key=value arguments here as needed
+    }
 
     console.log("Scanning directory:", targetDir)
 

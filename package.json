@@ -1,16 +1,29 @@
 {
   "name": "api-documentation-automation",
   "version": "1.0.0",
+  "private": true,
   "description": "DevOps tool for automating API documentation generation and contract validation by scanning Node.js services for OpenAPI JSDoc.",
-  "main": "src/cli.js",
+  "main": "index.js",
   "bin": {
-    "api-doc-tool": "src/cli.js"
+    "hiveapidocumenter": "index.js"
   },
   "scripts": {
-    "start": "node src/cli.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["api", "documentation", "openapi", "jsdoc", "devops", "automation"],
+  "keywords": [
+    "api",
+    "documentation",
+    "openapi",
+    "jsdoc",
+    "devops",
+    "automation"
+  ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "js-yaml": "^4.1.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-dist": "^5.32.0"
+  }
 }

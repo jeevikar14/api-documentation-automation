@@ -4,7 +4,6 @@ const FileScanner = require("../scanner/FileScanner");
 const SpecBuilder = require("../parser/SpecBuilder");
 const DocsGenerator = require("../generator/DocsGenerator");
 
-<<<<<<< HEAD
 function createArgumentParser()
 {
     return new CliArgumentParser();
@@ -47,49 +46,10 @@ if (require.main === module)
     {
         console.error("Documentation generation failed:", error.message);
         process.exitCode = 1;
-=======
-class Cli
-{
-    static #createArgumentParser()
-    {
-        return new CliArgumentParser();
-    }
-
-    static #createApplication()
-    {
-        return new DocumentationApp({
-            argumentParser: Cli.#createArgumentParser(),
-            fileScanner: new FileScanner(),
-            specBuilder: new SpecBuilder(),
-            docsGenerator: new DocsGenerator()
-        });
-    }
-
-    static main(argv = Cli.getProcessArguments())
-    {
-        return Cli.#createApplication().run(argv);
-    }
-
-    static getProcessArguments()
-    {
-        const argumentParser = Cli.#createArgumentParser();
-        return argumentParser.getProcessArguments(process.argv);
-    }
-
-    static parseCommandLineArgs(argv)
-    {
-        const argumentParser = Cli.#createArgumentParser();
-        return argumentParser.parse(argv);
->>>>>>> 914a7bf (Updated swagger ui)
     }
 }
 
 module.exports = {
-<<<<<<< HEAD
     main,
     parseCommandLineArgs
-=======
-    main: Cli.main,
-    parseCommandLineArgs: Cli.parseCommandLineArgs
->>>>>>> 914a7bf (Updated swagger ui)
 };

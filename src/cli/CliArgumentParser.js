@@ -1,19 +1,18 @@
 const path = require("path");
 
-const DEFAULT_OPTIONS = Object.freeze({
-    targetDir: process.cwd(),
-    outputDir: path.join(process.cwd(), "output"),
-    title: "API Documentation",
-    version: "1.0.0",
-    description: "Auto-generated API documentation"
-});
-
 class CliArgumentParser
 {
+    static #defaultOptions = Object.freeze({
+        targetDir: process.cwd(),
+        outputDir: path.join(process.cwd(), "output"),
+        title: "API Documentation",
+        version: "1.0.0",
+        description: "Auto-generated API documentation"
+    });
     constructor(defaultOptions = {})
     {
         this.defaultOptions = {
-            ...DEFAULT_OPTIONS,
+            ...CliArgumentParser.#defaultOptions,
             ...defaultOptions
         };
     }

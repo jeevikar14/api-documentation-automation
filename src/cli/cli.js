@@ -4,52 +4,42 @@ const FileScanner = require("../scanner/FileScanner");
 const SpecBuilder = require("../parser/SpecBuilder");
 const DocsGenerator = require("../generator/DocsGenerator");
 
-function createArgumentParser()
+class Cli
 {
-    return new CliArgumentParser();
-}
-
-function createApplication()
-{
-    return new DocumentationApp({
-        argumentParser: createArgumentParser(),
-        fileScanner: new FileScanner(),
-        specBuilder: new SpecBuilder(),
-        docsGenerator: new DocsGenerator()
-    });
-}
-
-function main(argv = getProcessArguments())
-{
-    return createApplication().run(argv);
-}
-
-function getProcessArguments()
-{
-    const argumentParser = createArgumentParser();
-    return argumentParser.getProcessArguments(process.argv);
-}
-
-function parseCommandLineArgs(argv)
-{
-    const argumentParser = createArgumentParser();
-    return argumentParser.parse(argv);
-}
-
-if (require.main === module)
-{
-    try
+    static #createArgumentParser()
     {
-        main();
+        return new CliArgumentParser();
     }
-    catch (error)
+
+    static #createApplication()
     {
-        console.error("Documentation generation failed:", error.message);
-        process.exitCode = 1;
+        return new DocumentationApp({
+            argumentParser: Cli.#createArgumentParser(),
+            fileScanner: new FileScanner(),
+            specBuilder: new SpecBuilder(),
+            docsGenerator: new DocsGenerator()
+        });
+    }
+
+    static main(argv = Cli.getProcessArguments())
+    {
+        return Cli.#createApplication().run(argv);
+    }
+
+    static getProcessArguments()
+    {
+        const argumentParser = Cli.#createArgumentParser();
+        return argumentParser.getProcessArguments(process.argv);
+    }
+
+    static parseCommandLineArgs(argv)
+    {
+        const argumentParser = Cli.#createArgumentParser();
+        return argumentParser.parse(argv);
     }
 }
 
 module.exports = {
-    main,
-    parseCommandLineArgs
+    main: Cli.main,
+    parseCommandLineArgs: Cli.parseCommandLineArgs
 };

@@ -23,7 +23,6 @@ class DocumentationApp
         this.logger.log("Endpoints documented:", output.endpointCount);
         this.logger.log("Swagger UI generated at:", output.htmlPath);
         this.logger.log("OpenAPI JSON generated at:", output.jsonPath);
-        this.logger.log("OpenAPI YAML generated at:", output.yamlPath);
 
         return output;
     }

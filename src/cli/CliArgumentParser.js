@@ -9,6 +9,7 @@ class CliArgumentParser
         version: "1.0.0",
         description: "Auto-generated API documentation"
     });
+
     constructor(defaultOptions = {})
     {
         this.defaultOptions = {
@@ -31,7 +32,6 @@ class CliArgumentParser
             }
 
             options.targetDir = path.resolve(arg);
-            break;
         }
 
         options.outputDir = path.resolve(options.outputDir);

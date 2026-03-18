@@ -53,6 +53,18 @@ class DocsGenerator
         .topbar {
             display: none;
         }
+<<<<<<< HEAD
+=======
+        .opblock .try-out,
+        .opblock .opblock-execute,
+        .execute-wrapper,
+        .btn.execute,
+        .try-out__btn,
+        .opblock-execute,
+        .opblock .execute {
+            display: none !important;
+        }
+>>>>>>> 914a7bf (Updated swagger ui)
     </style>
 </head>
 <body>
@@ -67,6 +79,10 @@ class DocsGenerator
             window.ui = SwaggerUIBundle({
                 spec,
                 dom_id: "#swagger-ui",
+<<<<<<< HEAD
+=======
+                supportedSubmitMethods: [],
+>>>>>>> 914a7bf (Updated swagger ui)
                 deepLinking: true,
                 docExpansion: "list",
                 defaultModelsExpandDepth: -1,
@@ -76,6 +92,21 @@ class DocsGenerator
                 ],
                 layout: "StandaloneLayout"
             });
+<<<<<<< HEAD
+=======
+
+            try {
+                document.querySelectorAll('.opblock .try-out, .opblock .opblock-execute, .execute-wrapper, .btn.execute, .try-out__btn, .opblock-execute').forEach(el => el.remove());
+                document.querySelectorAll('button').forEach(btn => {
+                    try {
+                        const txt = (btn.textContent || btn.innerText || '').trim();
+                        if (/^try it out$/i.test(txt) || /try it out/i.test(txt)) {
+                            btn.remove();
+                        }
+                    } catch (e) { }
+                });
+            } catch (e) { }
+>>>>>>> 914a7bf (Updated swagger ui)
         };
     </script>
 </body>

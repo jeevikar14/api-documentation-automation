@@ -1,5 +1,6 @@
 const path = require("path");
 
+<<<<<<< HEAD
 const DEFAULT_OPTIONS = Object.freeze({
     targetDir: process.cwd(),
     outputDir: path.join(process.cwd(), "output"),
@@ -14,6 +15,22 @@ class CliArgumentParser
     {
         this.defaultOptions = {
             ...DEFAULT_OPTIONS,
+=======
+
+class CliArgumentParser
+{
+    static #defaultOptions = Object.freeze({
+        targetDir: process.cwd(),
+        outputDir: path.join(process.cwd(), "output"),
+        title: "API Documentation",
+        version: "1.0.0",
+        description: "Auto-generated API documentation"
+    });
+    constructor(defaultOptions = {})
+    {
+        this.defaultOptions = {
+            ...CliArgumentParser.#defaultOptions,
+>>>>>>> 914a7bf (Updated swagger ui)
             ...defaultOptions
         };
     }
@@ -43,6 +60,7 @@ class CliArgumentParser
 
     getProcessArguments(runtimeArgs = process.argv)
     {
+<<<<<<< HEAD
         const args = Array.isArray(runtimeArgs) ? runtimeArgs.slice(1) : [];
 
         if (args.length === 0)
@@ -56,6 +74,9 @@ class CliArgumentParser
         }
 
         return args;
+=======
+        return Array.isArray(runtimeArgs) ? runtimeArgs.slice(2) : [];
+>>>>>>> 914a7bf (Updated swagger ui)
     }
 
     #isKeyValueOption(arg)

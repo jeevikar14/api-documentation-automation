@@ -1,0 +1,8 @@
+{
+  "method": "POST",
+  "path": "/api/auth/login",
+  "body": {
+    "email": "john.doe@example.com",
+    "password": "password123"
+  }
+}

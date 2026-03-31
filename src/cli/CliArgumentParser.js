@@ -3,11 +3,14 @@ const path = require("path");
 class CliArgumentParser
 {
     static #defaultOptions = Object.freeze({
+        command: "generate",
         targetDir: process.cwd(),
         outputDir: path.join(process.cwd(), "output"),
         title: "API Documentation",
         version: "1.0.0",
-        description: "Auto-generated API documentation"
+        description: "Auto-generated API documentation",
+        request: "",
+        requestFile: ""
     });
 
     constructor(defaultOptions = {})
@@ -21,6 +24,7 @@ class CliArgumentParser
     parse(argv)
     {
         const options = { ...this.defaultOptions };
+        const positionalArgs = [];
 
         for (const arg of argv)
         {
@@ -31,11 +35,27 @@ class CliArgumentParser
                 continue;
             }
 
-            options.targetDir = path.resolve(arg);
+            positionalArgs.push(arg);
+        }
+
+        if (positionalArgs[0] === "validate")
+        {
+            options.command = "validate";
+            positionalArgs.shift();
+        }
+
+        if (positionalArgs[0])
+        {
+            options.targetDir = path.resolve(positionalArgs[0]);
         }
 
         options.outputDir = path.resolve(options.outputDir);
         options.targetDir = path.resolve(options.targetDir);
+
+        if (options.requestFile)
+        {
+            options.requestFile = path.resolve(options.requestFile);
+        }
 
         return options;
     }
@@ -86,6 +106,12 @@ class CliArgumentParser
                 break;
             case "description":
                 options.description = value;
+                break;
+            case "request":
+                options.request = value;
+                break;
+            case "requestFile":
+                options.requestFile = value;
                 break;
             default:
                 break;

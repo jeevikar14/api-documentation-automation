@@ -10,7 +10,9 @@ class CliArgumentParser
         version: "1.0.0",
         description: "Auto-generated API documentation",
         request: "",
-        requestFile: ""
+        requestFile: "",
+        showHelp: false,
+        showVersion: false
     });
 
     constructor(defaultOptions = {})
@@ -28,6 +30,12 @@ class CliArgumentParser
 
         for (const arg of argv)
         {
+            if (this.#isFlagOption(arg))
+            {
+                this.#assignFlagOption(options, arg);
+                continue;
+            }
+
             if (this.#isKeyValueOption(arg))
             {
                 const [key, value] = this.#splitKeyValueOption(arg);
@@ -82,6 +90,11 @@ class CliArgumentParser
         return /^--[^=]+=.+$/.test(arg);
     }
 
+    #isFlagOption(arg)
+    {
+        return arg === "--help" || arg === "-h" || arg === "--version" || arg === "-v";
+    }
+
     #splitKeyValueOption(arg)
     {
         const optionText = arg.slice(2);
@@ -115,6 +128,19 @@ class CliArgumentParser
                 break;
             default:
                 break;
+        }
+    }
+
+    #assignFlagOption(options, flag)
+    {
+        if (flag === "--help" || flag === "-h")
+        {
+            options.showHelp = true;
+        }
+
+        if (flag === "--version" || flag === "-v")
+        {
+            options.showVersion = true;
         }
     }
 

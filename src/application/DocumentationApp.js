@@ -1,4 +1,5 @@
 const fs = require("fs");
+const packageJson = require("../../package.json");
 const { createRequestValidator } = require("../validator/validateRequest");
 
 class DocumentationApp
@@ -15,6 +16,19 @@ class DocumentationApp
     run(argv)
     {
         const options = this.argumentParser.parse(argv);
+
+        if (options.showHelp)
+        {
+            this.#printHelp();
+            return { mode: "help" };
+        }
+
+        if (options.showVersion)
+        {
+            this.#printVersion();
+            return { mode: "version" };
+        }
+
         const apiFiles = this.fileScanner.scan(options.targetDir);
 
         this.logger.log("Scanning directory:", options.targetDir);
@@ -116,6 +130,21 @@ class DocumentationApp
         }
 
         return "Unknown endpoint";
+    }
+
+    #printVersion()
+    {
+        this.logger.log(`hiveapidocumenter ${packageJson.version}`);
+    }
+
+    #printHelp()
+    {
+        this.logger.log("Usage:");
+        this.logger.log("  hiveapidocumenter [targetDir] [--output=<dir>] [--title=<text>] [--version=<semver>] [--description=<text>]");
+        this.logger.log("  hiveapidocumenter validate [targetDir] --requestFile=<file>");
+        this.logger.log("  hiveapidocumenter validate [targetDir] --request=<json>");
+        this.logger.log("  hiveapidocumenter --help");
+        this.logger.log("  hiveapidocumenter --version");
     }
 }
 

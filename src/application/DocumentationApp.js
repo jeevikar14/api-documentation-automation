@@ -1,7 +1,7 @@
 const fs = require("fs");
 const packageJson = require("../../package.json");
 const { createRequestValidator } = require("../validator/validateRequest");
-const { createResponseValidator } = require("../validator/validateResponse");
+const { createContractValidator } = require("../validator/validateContract");
 
 class DocumentationApp
 {
@@ -54,64 +54,88 @@ class DocumentationApp
     #runValidation(openApiSpec, options)
     {
         const request = this.#readValidationRequest(options);
-        const validator = createRequestValidator({ spec: openApiSpec });
-        const result = validator.validate(request);
-        const endpointLabel = this.#formatEndpointLabel(result.matchedEndpoint, request);
+        const hasResponseInput = Boolean(options.response || options.responseFile);
 
-        if (result.isValid)
+        if (!hasResponseInput)
         {
-            this.logger.log(`Validation passed for ${endpointLabel}.`);
+            const requestValidator = createRequestValidator({ spec: openApiSpec });
+            const requestResult = requestValidator.validate(request);
+            const endpointLabel = this.#formatEndpointLabel(requestResult.matchedEndpoint, request);
+
+            this.logger.log(requestResult.isValid ? "✔ Request validation passed" : "❌ Request validation failed");
             this.logger.log(`Endpoint: ${endpointLabel}`);
+
+            if (!requestResult.isValid)
+            {
+                this.#printErrors(requestResult.errors || []);
+            }
+
+            this.logger.log("");
+            this.logger.error("❌ Response validation skipped");
+
+            return {
+                mode: "validate",
+                ...requestResult,
+                responseValidation: {
+                    isValid: false,
+                    skipped: true,
+                    errors: ["No response input provided. Use --response or --responseFile."]
+                }
+            };
+        }
+
+        const response = this.#readValidationResponse(options);
+        const contractValidator = createContractValidator({ spec: openApiSpec });
+        const contractResult = contractValidator.validate({ request, response });
+        const endpointLabel = this.#formatEndpointLabel(contractResult.matchedEndpoint, request);
+
+        this.logger.log(
+            contractResult.requestValidation && contractResult.requestValidation.isValid
+                ? "✔ Request validation passed"
+                : "❌ Request validation failed"
+        );
+        this.logger.log(`Endpoint: ${endpointLabel}`);
+
+        if (contractResult.requestValidation && !contractResult.requestValidation.isValid)
+        {
+            this.#printErrors(contractResult.requestValidation.errors || []);
+        }
+
+        this.logger.log("");
+
+        if (contractResult.responseValidation && contractResult.responseValidation.skipped)
+        {
+            this.logger.error("❌ Response validation skipped");
+        }
+        else if (contractResult.responseValidation && contractResult.responseValidation.isValid)
+        {
+            this.logger.log("✔ Response validation passed");
         }
         else
         {
-            this.logger.error("Validation failed:");
-            this.logger.error(`Endpoint: ${endpointLabel}`);
-            this.logger.error("Errors:");
-
-            for (let index = 0; index < result.errors.length; index += 1)
-            {
-                this.logger.error(`${index + 1}. ${result.errors[index]}`);
-            }
+            this.logger.error("❌ Response validation failed");
+            this.#printErrors((contractResult.responseValidation && contractResult.responseValidation.errors) || []);
         }
 
-        let validationOutput = {
+        return {
             mode: "validate",
-            ...result
+            ...contractResult
         };
+    }
 
-        if (options.response || options.responseFile)
+    #printErrors(errors)
+    {
+        if (!errors.length)
         {
-            const response = this.#readValidationResponse(options);
-            const responseValidator = createResponseValidator({ spec: openApiSpec });
-            const responseResult = responseValidator.validate(response, {
-                context: {
-                    path: result.matchedEndpoint?.path,
-                    method: result.matchedEndpoint?.method
-                }
-            });
-
-            this.logger.log("");
-
-            if (responseResult.isValid)
-            {
-                this.logger.log(`Response validation passed for ${endpointLabel}.`);
-            }
-            else
-            {
-                this.logger.error("Response validation failed:");
-                this.logger.error("Errors:");
-
-                for (let index = 0; index < responseResult.errors.length; index += 1)
-                {
-                    this.logger.error(`${index + 1}. ${responseResult.errors[index]}`);
-                }
-            }
-
-            validationOutput.responseValidation = responseResult;
+            return;
         }
 
-        return validationOutput;
+        this.logger.error("Errors:");
+
+        for (let index = 0; index < errors.length; index += 1)
+        {
+            this.logger.error(`${index + 1}. ${errors[index]}`);
+        }
     }
 
     #readValidationRequest(options)

@@ -2,6 +2,8 @@
 
 const { main } = require("./src/cli/cli");
 const { validateRequest, createRequestValidator } = require("./src/validator/validateRequest");
+const { validateResponse, createResponseValidator } = require("./src/validator/validateResponse");
+const { validateContract, createContractValidator } = require("./src/validator/validateContract");
 
 if (require.main === module)
 {
@@ -19,5 +21,9 @@ if (require.main === module)
 module.exports = {
 	main,
 	validateRequest,
-	createRequestValidator
+	createRequestValidator,
+	validateResponse,
+	createResponseValidator,
+	validateContract,
+	createContractValidator
 };

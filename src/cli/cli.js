@@ -25,7 +25,7 @@ class Cli
     {
         const output = Cli.#createApplication().run(argv);
 
-        if (output && output.mode === "validate" && !output.isValid)
+        if (output && Object.prototype.hasOwnProperty.call(output, "isValid") && !output.isValid)
         {
             process.exitCode = 1;
         }

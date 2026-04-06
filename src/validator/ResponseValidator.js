@@ -57,12 +57,16 @@ class ResponseValidator
 
     #normalizeInput(response, context = {})
     {
+        const effectiveContext = context && typeof context === "object" && context.context
+            ? context.context
+            : context;
+
         if (!response || typeof response !== "object")
         {
             throw new Error("Response must be an object.");
         }
 
-        const rawPath = String((context.path || response.path) || "").trim();
+        const rawPath = String((effectiveContext.path || response.path) || "").trim();
 
         if (!rawPath)
         {
@@ -70,7 +74,7 @@ class ResponseValidator
         }
 
         const [pathWithoutQuery] = rawPath.split("?");
-        const method = String((context.method || response.method) || "").trim().toLowerCase();
+        const method = String((effectiveContext.method || response.method) || "").trim().toLowerCase();
 
         if (!method)
         {
@@ -198,6 +202,12 @@ class ResponseValidator
             const resolvedHeader = this.refResolver.resolveReferenceObject(headerSchemaObj) || {};
             const schema = resolvedHeader.schema || {};
             const value = normalized.headers[String(headerName).toLowerCase()];
+
+            if (resolvedHeader.required && value === undefined)
+            {
+                errors.push(`Missing required response header '${headerName}'.`);
+                continue;
+            }
 
             if (value !== undefined)
             {

@@ -1,0 +1,11 @@
+{
+  "method": "POST",
+  "path": "/api/auth/login",
+  "headers": {
+    "content-type": "application/json"
+  },
+  "body": {
+    "errorMessage": "Invalid credentials",
+    "errorCode": 401
+  }
+}

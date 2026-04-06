@@ -1,6 +1,7 @@
 const fs = require("fs");
 const packageJson = require("../../package.json");
 const { createRequestValidator } = require("../validator/validateRequest");
+const { createResponseValidator } = require("../validator/validateResponse");
 
 class DocumentationApp
 {
@@ -74,10 +75,43 @@ class DocumentationApp
             }
         }
 
-        return {
+        let validationOutput = {
             mode: "validate",
             ...result
         };
+
+        if (options.response || options.responseFile)
+        {
+            const response = this.#readValidationResponse(options);
+            const responseValidator = createResponseValidator({ spec: openApiSpec });
+            const responseResult = responseValidator.validate(response, {
+                context: {
+                    path: result.matchedEndpoint?.path,
+                    method: result.matchedEndpoint?.method
+                }
+            });
+
+            this.logger.log("");
+
+            if (responseResult.isValid)
+            {
+                this.logger.log(`Response validation passed for ${endpointLabel}.`);
+            }
+            else
+            {
+                this.logger.error("Response validation failed:");
+                this.logger.error("Errors:");
+
+                for (let index = 0; index < responseResult.errors.length; index += 1)
+                {
+                    this.logger.error(`${index + 1}. ${responseResult.errors[index]}`);
+                }
+            }
+
+            validationOutput.responseValidation = responseResult;
+        }
+
+        return validationOutput;
     }
 
     #readValidationRequest(options)
@@ -115,6 +149,41 @@ class DocumentationApp
         throw new Error("Request input is required for validation. Use --request or --requestFile.");
     }
 
+    #readValidationResponse(options)
+    {
+        if (options.response)
+        {
+            try
+            {
+                return JSON.parse(options.response);
+            }
+            catch (error)
+            {
+                throw new Error("Invalid JSON in --response option.");
+            }
+        }
+
+        if (options.responseFile)
+        {
+            if (!fs.existsSync(options.responseFile))
+            {
+                throw new Error(`Response file not found: ${options.responseFile}`);
+            }
+
+            try
+            {
+                const raw = fs.readFileSync(options.responseFile, "utf8");
+                return JSON.parse(raw);
+            }
+            catch (error)
+            {
+                throw new Error(`Invalid JSON in response file: ${options.responseFile}`);
+            }
+        }
+
+        throw new Error("Response input is required. Use --response or --responseFile.");
+    }
+
     #formatEndpointLabel(matchedEndpoint, request)
     {
         const method = matchedEndpoint && matchedEndpoint.method
@@ -141,8 +210,8 @@ class DocumentationApp
     {
         this.logger.log("Usage:");
         this.logger.log("  hiveapidocumenter [targetDir] [--output=<dir>] [--title=<text>] [--version=<semver>] [--description=<text>]");
-        this.logger.log("  hiveapidocumenter validate [targetDir] --requestFile=<file>");
-        this.logger.log("  hiveapidocumenter validate [targetDir] --request=<json>");
+        this.logger.log("  hiveapidocumenter validate [targetDir] --requestFile=<file> [--responseFile=<file>]");
+        this.logger.log("  hiveapidocumenter validate [targetDir] --request=<json> [--response=<json>]");
         this.logger.log("  hiveapidocumenter --help");
         this.logger.log("  hiveapidocumenter --version");
     }

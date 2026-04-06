@@ -1,0 +1,15 @@
+{
+  "method": "POST",
+  "path": "/api/auth/login",
+  "status": 200,
+  "headers": {
+    "content-type": "application/json"
+  },
+  "body": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+    "user": {
+      "id": "user_12345",
+      "email": "john.doe@example.com"
+    }
+  }
+}

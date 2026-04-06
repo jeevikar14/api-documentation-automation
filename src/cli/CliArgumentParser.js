@@ -3,12 +3,18 @@ const path = require("path");
 class CliArgumentParser
 {
     static #defaultOptions = Object.freeze({
+        command: "generate",
         targetDir: process.cwd(),
         outputDir: path.join(process.cwd(), "output"),
         title: "API Documentation",
         version: "1.0.0",
-        description: "Auto-generated API documentation"
+        description: "Auto-generated API documentation",
+        request: "",
+        requestFile: "",
+        showHelp: false,
+        showVersion: false
     });
+
     constructor(defaultOptions = {})
     {
         this.defaultOptions = {
@@ -20,9 +26,16 @@ class CliArgumentParser
     parse(argv)
     {
         const options = { ...this.defaultOptions };
+        const positionalArgs = [];
 
         for (const arg of argv)
         {
+            if (this.#isFlagOption(arg))
+            {
+                this.#assignFlagOption(options, arg);
+                continue;
+            }
+
             if (this.#isKeyValueOption(arg))
             {
                 const [key, value] = this.#splitKeyValueOption(arg);
@@ -30,12 +43,27 @@ class CliArgumentParser
                 continue;
             }
 
-            options.targetDir = path.resolve(arg);
-            break;
+            positionalArgs.push(arg);
+        }
+
+        if (positionalArgs[0] === "validate")
+        {
+            options.command = "validate";
+            positionalArgs.shift();
+        }
+
+        if (positionalArgs[0])
+        {
+            options.targetDir = path.resolve(positionalArgs[0]);
         }
 
         options.outputDir = path.resolve(options.outputDir);
         options.targetDir = path.resolve(options.targetDir);
+
+        if (options.requestFile)
+        {
+            options.requestFile = path.resolve(options.requestFile);
+        }
 
         return options;
     }
@@ -60,6 +88,11 @@ class CliArgumentParser
     #isKeyValueOption(arg)
     {
         return /^--[^=]+=.+$/.test(arg);
+    }
+
+    #isFlagOption(arg)
+    {
+        return arg === "--help" || arg === "-h" || arg === "--version" || arg === "-v";
     }
 
     #splitKeyValueOption(arg)
@@ -87,8 +120,27 @@ class CliArgumentParser
             case "description":
                 options.description = value;
                 break;
+            case "request":
+                options.request = value;
+                break;
+            case "requestFile":
+                options.requestFile = value;
+                break;
             default:
                 break;
+        }
+    }
+
+    #assignFlagOption(options, flag)
+    {
+        if (flag === "--help" || flag === "-h")
+        {
+            options.showHelp = true;
+        }
+
+        if (flag === "--version" || flag === "-v")
+        {
+            options.showVersion = true;
         }
     }
 

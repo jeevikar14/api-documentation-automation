@@ -1,13 +1,23 @@
 #!/usr/bin/env node
 
 const { main } = require("./src/cli/cli");
+const { validateRequest, createRequestValidator } = require("./src/validator/validateRequest");
 
-try
+if (require.main === module)
 {
-	main();
+	try
+	{
+		main();
+	}
+	catch (error)
+	{
+		console.error("Documentation generation failed:", error.message);
+		process.exitCode = 1;
+	}
 }
-catch (error)
-{
-	console.error("Documentation generation failed:", error.message);
-	process.exitCode = 1;
-}
+
+module.exports = {
+	main,
+	validateRequest,
+	createRequestValidator
+};

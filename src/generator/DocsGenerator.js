@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const yaml = require("js-yaml");
 
 class DocsGenerator
 {
@@ -10,17 +9,14 @@ class DocsGenerator
         fs.mkdirSync(outputDir, { recursive: true });
 
         const jsonPath = path.join(outputDir, "openapi-spec.json");
-        const yamlPath = path.join(outputDir, "openapi-spec.yaml");
         const htmlPath = path.join(outputDir, "documentation.html");
 
         fs.writeFileSync(jsonPath, JSON.stringify(openApiSpec, null, 2));
-        fs.writeFileSync(yamlPath, yaml.dump(openApiSpec, { noRefs: true }));
         fs.writeFileSync(htmlPath, this.#buildHtml(openApiSpec, options.title));
 
         return {
             outputDir,
             jsonPath,
-            yamlPath,
             htmlPath,
             endpointCount: this.#countEndpoints(openApiSpec.paths || {})
         };
@@ -53,6 +49,7 @@ class DocsGenerator
         .topbar {
             display: none;
         }
+
         .opblock .try-out,
         .opblock .opblock-execute,
         .execute-wrapper,
@@ -87,76 +84,6 @@ class DocsGenerator
                 ],
                 layout: "StandaloneLayout"
             });
-
-            try
-            {
-                document.querySelectorAll('.opblock .try-out, .opblock .opblock-execute, .execute-wrapper, .btn.execute, .try-out__btn, .opblock-execute').forEach(el => el.remove());
-                document.querySelectorAll('button').forEach(btn => {
-                    try
-                    {
-                        const txt = (btn.textContent || btn.innerText || '').trim();
-                        if (/try it out/i.test(txt))
-                        {
-                            btn.remove();
-                        }
-                    }
-                    catch (e)
-                    {
-                    }
-                });
-            }
-            catch (e)
-            {
-            }
-
-            try
-            {
-                const target = document.getElementById('swagger-ui');
-                if (target)
-                {
-                    const observer = new MutationObserver(mutations =>
-                    {
-                        for (const m of mutations)
-                        {
-                            for (const node of Array.from(m.addedNodes || []))
-                            {
-                                try
-                                {
-                                    if (node.nodeType === Node.ELEMENT_NODE)
-                                    {
-                                        const el = node;
-                                        if ((el.tagName === 'BUTTON' && /try it out/i.test((el.textContent||el.innerText||'').trim())) || (el.matches && el.matches('.try-out, .opblock-execute, .try-out__btn, .btn.execute, .opblock .try-out, .opblock .opblock-execute')))
-                                        {
-                                            el.remove();
-                                        }
-                                        el.querySelectorAll && el.querySelectorAll('button').forEach(b =>
-                                        {
-                                            try
-                                            {
-                                                if (/try it out/i.test((b.textContent||b.innerText||'').trim()))
-                                                {
-                                                    b.remove();
-                                                }
-                                            }
-                                            catch (e)
-                                            {
-                                            }
-                                        });
-                                    }
-                                }
-                                catch (e)
-                                {
-                                }
-                            }
-                        }
-                    });
-                    observer.observe(target, { childList: true, subtree: true });
-                    setTimeout(() => observer.disconnect(), 10000);
-                }
-            }
-            catch (e)
-            {
-            }
         };
     </script>
 </body>

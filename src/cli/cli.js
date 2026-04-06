@@ -23,7 +23,14 @@ class Cli
 
     static main(argv = Cli.getProcessArguments())
     {
-        return Cli.#createApplication().run(argv);
+        const output = Cli.#createApplication().run(argv);
+
+        if (output && output.mode === "validate" && !output.isValid)
+        {
+            process.exitCode = 1;
+        }
+
+        return output;
     }
 
     static getProcessArguments()

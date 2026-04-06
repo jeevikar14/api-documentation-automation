@@ -1,6 +1,7 @@
 const path = require("path");
 
-class CliArgumentParser {
+class CliArgumentParser
+{
     static #defaultOptions = Object.freeze({
         command: "generate",
         targetDir: process.cwd(),
@@ -16,24 +17,29 @@ class CliArgumentParser {
         showVersion: false
     });
 
-    constructor(defaultOptions = {}) {
+    constructor(defaultOptions = {})
+    {
         this.defaultOptions = {
             ...CliArgumentParser.#defaultOptions,
             ...defaultOptions
         };
     }
 
-    parse(argv) {
+    parse(argv)
+    {
         const options = { ...this.defaultOptions };
         const positionalArgs = [];
 
-        for (const arg of argv) {
-            if (this.#isFlagOption(arg)) {
+        for (const arg of argv)
+        {
+            if (this.#isFlagOption(arg))
+            {
                 this.#assignFlagOption(options, arg);
                 continue;
             }
 
-            if (this.#isKeyValueOption(arg)) {
+            if (this.#isKeyValueOption(arg))
+            {
                 const [key, value] = this.#splitKeyValueOption(arg);
                 this.#assignOption(options, key, value);
                 continue;
@@ -42,52 +48,62 @@ class CliArgumentParser {
             positionalArgs.push(arg);
         }
 
-        if (positionalArgs[0] === "validate") {
+        if (positionalArgs[0] === "validate")
+        {
             options.command = "validate";
             positionalArgs.shift();
         }
 
-        if (positionalArgs[0]) {
+        if (positionalArgs[0])
+        {
             options.targetDir = path.resolve(positionalArgs[0]);
         }
 
         options.outputDir = path.resolve(options.outputDir);
         options.targetDir = path.resolve(options.targetDir);
 
-        if (options.requestFile) {
+        if (options.requestFile)
+        {
             options.requestFile = path.resolve(options.requestFile);
         }
 
-        if (options.responseFile) {
+        if (options.responseFile)
+        {
             options.responseFile = path.resolve(options.responseFile);
         }
 
         return options;
     }
 
-    getProcessArguments(runtimeArgs = process.argv) {
+    getProcessArguments(runtimeArgs = process.argv)
+    {
         const args = Array.isArray(runtimeArgs) ? runtimeArgs.slice(1) : [];
 
-        if (args.length === 0) {
+        if (args.length === 0)
+        {
             return [];
         }
 
-        if (this.#looksLikeScriptReference(args[0])) {
+        if (this.#looksLikeScriptReference(args[0]))
+        {
             return args.slice(1);
         }
 
         return args;
     }
 
-    #isKeyValueOption(arg) {
+    #isKeyValueOption(arg)
+    {
         return /^--[^=]+=.+$/.test(arg);
     }
 
-    #isFlagOption(arg) {
+    #isFlagOption(arg)
+    {
         return arg === "--help" || arg === "-h" || arg === "--version" || arg === "-v";
     }
 
-    #splitKeyValueOption(arg) {
+    #splitKeyValueOption(arg)
+    {
         const optionText = arg.slice(2);
         const separatorIndex = optionText.indexOf("=");
         const key = optionText.slice(0, separatorIndex).trim();
@@ -95,8 +111,10 @@ class CliArgumentParser {
         return [key, value];
     }
 
-    #assignOption(options, key, value) {
-        switch (key) {
+    #assignOption(options, key, value)
+    {
+        switch (key)
+        {
             case "output":
                 options.outputDir = value;
                 break;
@@ -126,18 +144,23 @@ class CliArgumentParser {
         }
     }
 
-    #assignFlagOption(options, flag) {
-        if (flag === "--help" || flag === "-h") {
+    #assignFlagOption(options, flag)
+    {
+        if (flag === "--help" || flag === "-h")
+        {
             options.showHelp = true;
         }
 
-        if (flag === "--version" || flag === "-v") {
+        if (flag === "--version" || flag === "-v")
+        {
             options.showVersion = true;
         }
     }
 
-    #looksLikeScriptReference(value) {
-        if (!value) {
+    #looksLikeScriptReference(value)
+    {
+        if (!value)
+        {
             return false;
         }
 

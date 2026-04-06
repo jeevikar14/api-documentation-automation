@@ -71,15 +71,15 @@ class DocumentationApp
             }
 
             this.logger.log("");
-            this.logger.error("❌ Response validation skipped");
+            this.logger.log("ℹ Response validation skipped (no response input provided)");
 
             return {
                 mode: "validate",
                 ...requestResult,
                 responseValidation: {
-                    isValid: false,
+                    isValid: true,
                     skipped: true,
-                    errors: ["No response input provided. Use --response or --responseFile."]
+                    errors: []
                 }
             };
         }

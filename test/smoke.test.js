@@ -7,20 +7,24 @@ const tempDir = path.join(rootDir, "test", ".tmp");
 const backendDir = path.join(tempDir, "backend");
 const outputDir = path.join(tempDir, "output");
 
-function runCli(args) {
+function runCli(args)
+{
     return spawnSync(process.execPath, ["index.js", ...args], {
         cwd: rootDir,
         encoding: "utf8"
     });
 }
 
-function assert(condition, message) {
-    if (!condition) {
+function assert(condition, message)
+{
+    if (!condition)
+    {
         throw new Error(message);
     }
 }
 
-function ensureMockBackend() {
+function ensureMockBackend()
+{
     fs.mkdirSync(backendDir, { recursive: true });
 
     const mockRouteFile = path.join(backendDir, "auth.routes.js");
@@ -67,7 +71,9 @@ function ensureMockBackend() {
  *                       type: string
  *                       format: email
  */
-function noop() {}
+function noop()
+{
+}
 
 module.exports = { noop };
 `;
@@ -75,7 +81,8 @@ module.exports = { noop };
     fs.writeFileSync(mockRouteFile, mockRouteSource, "utf8");
 }
 
-function run() {
+function run()
+{
     fs.rmSync(tempDir, { recursive: true, force: true });
     ensureMockBackend();
 
@@ -143,8 +150,11 @@ function run() {
     console.log("✅ All smoke tests passed");
 }
 
-try {
+try
+{
     run();
-} finally {
+}
+finally
+{
     fs.rmSync(tempDir, { recursive: true, force: true });
 }

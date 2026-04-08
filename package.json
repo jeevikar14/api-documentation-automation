@@ -1,6 +1,6 @@
 {
   "name": "api-documentation-automation",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
   "description": "DevOps tool for automating API documentation generation and contract validation by scanning Node.js services for OpenAPI JSDoc.",
   "main": "index.js",

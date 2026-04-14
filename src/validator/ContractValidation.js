@@ -1,5 +1,5 @@
 const ContractValidator = require("./ContractValidator");
-const { loadOpenApiSpec } = require("./validateRequest");
+const { loadOpenApiSpec } = require("./RequestValidation");
 
 function createContractValidator(options = {})
 {

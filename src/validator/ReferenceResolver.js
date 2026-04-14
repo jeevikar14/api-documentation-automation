@@ -1,4 +1,4 @@
-class RefResolver
+class ReferenceResolver
 {
     constructor(openApiSpec = {})
     {
@@ -55,4 +55,4 @@ class RefResolver
     }
 }
 
-module.exports = RefResolver;
+module.exports = ReferenceResolver;

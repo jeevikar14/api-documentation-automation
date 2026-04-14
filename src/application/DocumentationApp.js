@@ -1,7 +1,7 @@
 const fs = require("fs");
 const packageJson = require("../../package.json");
-const { createRequestValidator } = require("../validator/validateRequest");
-const { createContractValidator } = require("../validator/validateContract");
+const { createRequestValidator } = require("../validator/RequestValidation");
+const { createContractValidator } = require("../validator/ContractValidation");
 
 class DocumentationApp
 {

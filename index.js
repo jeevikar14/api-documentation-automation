@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 const { main } = require("./src/cli/cli");
-const { validateRequest, createRequestValidator } = require("./src/validator/validateRequest");
-const { validateResponse, createResponseValidator } = require("./src/validator/validateResponse");
-const { validateContract, createContractValidator } = require("./src/validator/validateContract");
+const { validateRequest, createRequestValidator } = require("./src/validator/RequestValidation");
+const { validateResponse, createResponseValidator } = require("./src/validator/ResponseValidation");
+const { validateContract, createContractValidator } = require("./src/validator/ContractValidation");
 
 if (require.main === module)
 {

@@ -48,10 +48,12 @@ class CliArgumentParser
             positionalArgs.push(arg);
         }
 
-        if (positionalArgs[0] === "validate")
+        const commandIndex = positionalArgs.findIndex((value) => value === "validate" || value === "generate");
+
+        if (commandIndex >= 0)
         {
-            options.command = "validate";
-            positionalArgs.shift();
+            options.command = positionalArgs[commandIndex];
+            positionalArgs.splice(commandIndex, 1);
         }
 
         if (positionalArgs[0])

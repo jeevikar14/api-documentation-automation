@@ -1,4 +1,4 @@
-const RefResolver = require("./RefResolver");
+const ReferenceResolver = require("./ReferenceResolver");
 const SchemaValidator = require("./SchemaValidator");
 
 class RequestValidator
@@ -6,7 +6,7 @@ class RequestValidator
     constructor(openApiSpec = {})
     {
         this.openApiSpec = openApiSpec;
-        this.refResolver = new RefResolver(openApiSpec);
+        this.refResolver = new ReferenceResolver(openApiSpec);
         this.schemaValidator = new SchemaValidator(this.refResolver);
     }
 

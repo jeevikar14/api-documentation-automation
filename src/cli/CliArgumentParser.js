@@ -24,7 +24,8 @@ class CliArgumentParser
         serviceName: DEFAULTS.SERVICE_NAME
     });
 
-    constructor(defaultOptions = {}) {
+    constructor(defaultOptions = {})
+    {
 
         this.defaultOptions = {
             ...CliArgumentParser.#defaultOptions,
@@ -84,7 +85,8 @@ class CliArgumentParser
         return options;
     }
 
-    getProcessArguments(runtimeArgs = process.argv) {
+    getProcessArguments(runtimeArgs = process.argv)
+    {
 
         const args = Array.isArray(runtimeArgs) ? runtimeArgs.slice(1) : [];
 

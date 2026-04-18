@@ -10,7 +10,8 @@ const
 
 class DocumentationApp
 {
-    constructor( { argumentParser, fileScanner, specBuilder, docsGenerator, logger = console }) {
+    constructor( { argumentParser, fileScanner, specBuilder, docsGenerator, logger = console })
+    {
 
         this.argumentParser = argumentParser;
         this.fileScanner = fileScanner;

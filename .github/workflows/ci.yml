@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Ensure CLI entry casing
+        run: |
+          if [ ! -f Index.js ] && [ -f index.js ]; then
+            cp index.js Index.js
+          fi
+
+      - name: Run smoke tests
+        run: npm test
+
+      - name: CI diagnostics (fail fast if Index.js missing)
+        if: always()
+        run: |
+          echo "Working directory: $(pwd)"
+          echo "List root files:"; ls -la
+          echo "Check Index.js exists:"; if [ -f Index.js ]; then echo "Index.js present"; else echo "ERROR: Index.js missing — ensure it's committed to the repo root"; ls -la | sed -n '1,200p'; exit 1; fi

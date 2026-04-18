@@ -21,7 +21,8 @@ class Cli
         });
     }
 
-    static async main(argv = Cli.getProcessArguments()) {
+    static async main(argv = Cli.getProcessArguments())
+    {
 
         const output = await Cli.#createApplication().run(argv);
 

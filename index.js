@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const
-{ main } = require("./src/cli/Cli");
+{ main } = require("./src/cli/cli");
 const
 { validateRequest, createRequestValidator } = require("./src/validator/RequestValidation");
 const

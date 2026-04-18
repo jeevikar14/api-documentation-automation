@@ -13,7 +13,7 @@ class Cli
 
     static #createApplication()
     {
-        return new DocumentationApp({
+        return new DocumentationApp( {
             argumentParser: Cli.#createArgumentParser(),
             fileScanner: new FileScanner(),
             specBuilder: new SpecBuilder(),
@@ -21,9 +21,9 @@ class Cli
         });
     }
 
-    static main(argv = Cli.getProcessArguments())
-    {
-        const output = Cli.#createApplication().run(argv);
+    static async main(argv = Cli.getProcessArguments()) {
+
+        const output = await Cli.#createApplication().run(argv);
 
         if (output && Object.prototype.hasOwnProperty.call(output, "isValid") && !output.isValid)
         {

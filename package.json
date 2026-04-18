@@ -3,13 +3,13 @@
   "version": "1.1.0",
   "private": true,
   "description": "DevOps tool for automating API documentation generation and contract validation by scanning Node.js services for OpenAPI JSDoc.",
-  "main": "index.js",
+  "main": "Index.js",
   "bin": {
-    "hiveapidocumenter": "index.js"
+    "hiveapidocumenter": "Index.js"
   },
   "scripts": {
-    "start": "node index.js",
-    "test": "node test/smoke.test.js"
+    "start": "node Index.js",
+    "test": "node test/SmokeTest.js"
   },
   "keywords": [
     "api",

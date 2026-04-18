@@ -1,7 +1,7 @@
 class ReferenceResolver
 {
-    constructor(openApiSpec = {})
-    {
+    constructor(openApiSpec = {}) {
+
         this.openApiSpec = openApiSpec;
     }
 
@@ -17,7 +17,8 @@ class ReferenceResolver
         while (resolved && typeof resolved === "object" && resolved.$ref)
         {
             const refTarget = this.#resolvePointer(resolved.$ref);
-            const { $ref, ...overrides } = resolved;
+            const
+            { $ref, ...overrides } = resolved;
             resolved = {
                 ...refTarget,
                 ...overrides

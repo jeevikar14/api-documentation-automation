@@ -3,8 +3,7 @@ const SchemaValidator = require("./SchemaValidator");
 
 class RequestValidator
 {
-    constructor(openApiSpec = {})
-    {
+    constructor(openApiSpec = {}) {
         this.openApiSpec = openApiSpec;
         this.refResolver = new ReferenceResolver(openApiSpec);
         this.schemaValidator = new SchemaValidator(this.refResolver);
@@ -12,10 +11,10 @@ class RequestValidator
 
     validate(request)
     {
-        const normalizedRequest = this.#normalizeRequest(request);
+        const normalized = this.#normalizeRequest(request);
         const errors = [];
 
-        const pathMatch = this.#matchPath(normalizedRequest.path);
+        const pathMatch = this.#matchPath(normalized.path);
 
         if (!pathMatch)
         {
@@ -27,32 +26,32 @@ class RequestValidator
         }
 
         const pathItem = this.refResolver.resolveReferenceObject(pathMatch.pathItem) || {};
-        const operation = this.refResolver.resolveReferenceObject(pathItem[normalizedRequest.method]);
+        const operation = this.refResolver.resolveReferenceObject(pathItem[normalized.method]);
 
         if (!operation)
         {
             return {
                 isValid: false,
                 errors: [
-                    `Path '${pathMatch.templatePath}' exists, but method '${normalizedRequest.method.toUpperCase()}' is not defined.`
+                    `Path '${pathMatch.templatePath}' exists, but method '${normalized.method.toUpperCase()}' is not defined.`
                 ],
                 matchedEndpoint: {
                     path: pathMatch.templatePath,
-                    method: normalizedRequest.method
+                    method: normalized.method
                 }
             };
         }
 
         const parameters = this.#collectParameters(pathItem, operation);
-        this.#validateParameters(parameters, normalizedRequest, pathMatch.pathParams, errors);
-        this.#validateRequestBody(operation, normalizedRequest.body, errors);
+        this.#validateParameters(parameters, normalized, pathMatch.pathParams, errors);
+        this.#validateRequestBody(operation, normalized.body, errors);
 
         return {
             isValid: errors.length === 0,
             errors,
             matchedEndpoint: {
                 path: pathMatch.templatePath,
-                method: normalizedRequest.method
+                method: normalized.method
             }
         };
     }

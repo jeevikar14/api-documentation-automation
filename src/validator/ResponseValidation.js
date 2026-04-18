@@ -1,5 +1,6 @@
 const ResponseValidator = require("./ResponseValidator");
-const { loadOpenApiSpec } = require("./RequestValidation");
+const
+{ loadOpenApiSpec } = require("./RequestValidation");
 
 function createResponseValidator(options = {})
 {

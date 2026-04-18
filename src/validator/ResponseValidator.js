@@ -3,8 +3,8 @@ const SchemaValidator = require("./SchemaValidator");
 
 class ResponseValidator
 {
-    constructor(openApiSpec = {})
-    {
+    constructor(openApiSpec = {}) {
+
         this.openApiSpec = openApiSpec;
         this.refResolver = new ReferenceResolver(openApiSpec);
         this.schemaValidator = new SchemaValidator(this.refResolver);
@@ -55,8 +55,8 @@ class ResponseValidator
         };
     }
 
-    #normalizeInput(response, context = {})
-    {
+    #normalizeInput(response, context = {}) {
+
         const effectiveContext = context && typeof context === "object" && context.context
             ? context.context
             : context;

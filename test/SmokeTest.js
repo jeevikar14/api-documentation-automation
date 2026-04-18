@@ -10,7 +10,7 @@ const SAMPLES_DIR = path.join(rootDir, "samples");
 
 function runCli(args)
 {
-    return spawnSync(process.execPath, ["index.js", ...args],
+    return spawnSync(process.execPath, ["Index.js", ...args],
     {
         cwd: rootDir,
         encoding: "utf8"

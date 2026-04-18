@@ -1,8 +1,10 @@
 const fs = require("fs");
 const path = require("path");
 const RequestValidator = require("./RequestValidator");
+const
+{ FILE_NAMES, DEFAULTS } = require("../constants");
 
-const DEFAULT_SPEC_PATH = path.join(process.cwd(), "output", "openapi-spec.json");
+const DEFAULT_SPEC_PATH = path.join(process.cwd(), DEFAULTS.OUTPUT_DIR, FILE_NAMES.OPENAPI);
 
 function loadOpenApiSpec(options = {})
 {
@@ -24,7 +26,7 @@ function loadOpenApiSpec(options = {})
     {
         return JSON.parse(raw);
     }
-    catch (error)
+catch (error)
     {
         throw new Error(`OpenAPI spec JSON is invalid at: ${specPath}`);
     }

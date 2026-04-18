@@ -1,12 +1,17 @@
 const fs = require("fs");
 const packageJson = require("../../package.json");
-const { createRequestValidator } = require("../validator/RequestValidation");
-const { createContractValidator } = require("../validator/ContractValidation");
+const
+{ createRequestValidator } = require("../validator/RequestValidation");
+const
+{ createContractValidator } = require("../validator/ContractValidation");
+const PortalClient = require("../cli/PortalClient");
+const
+{ PORTAL_URLS, PORTAL_ENDPOINTS, DEFAULTS, PAYLOAD_FIELDS } = require("../constants");
 
 class DocumentationApp
 {
-    constructor({ argumentParser, fileScanner, specBuilder, docsGenerator, logger = console })
-    {
+    constructor( { argumentParser, fileScanner, specBuilder, docsGenerator, logger = console }) {
+
         this.argumentParser = argumentParser;
         this.fileScanner = fileScanner;
         this.specBuilder = specBuilder;
@@ -14,7 +19,7 @@ class DocumentationApp
         this.logger = logger;
     }
 
-    run(argv)
+    async run(argv)
     {
         const options = this.argumentParser.parse(argv);
 
@@ -48,6 +53,55 @@ class DocumentationApp
         this.logger.log("Swagger UI generated at:", output.htmlPath);
         this.logger.log("OpenAPI JSON generated at:", output.jsonPath);
 
+        if (options.publishApproval)
+        {
+            const portalUrls = [];
+            if (options.portalUrl) portalUrls.push(options.portalUrl);
+            if (process.env.HIVE_PORTAL_URL) portalUrls.push(process.env.HIVE_PORTAL_URL);
+            for (const url of PORTAL_URLS)
+            {
+                if (!portalUrls.includes(url)) portalUrls.push(url);
+            }
+
+            const portalEndpoint = options.portalEndpoint || PORTAL_ENDPOINTS.PUBLISH_DOCUMENTATION_REQUEST;
+            const serviceName = options.serviceName || packageJson.name || options.title || DEFAULTS.SERVICE_NAME;
+            const version = options.version || DEFAULTS.VERSION;
+            const htmlContent = fs.readFileSync(output.htmlPath, "utf8");
+            const headers = {};
+            if (options.portalAuthToken)
+            {
+                headers.Authorization = `Bearer ${options.portalAuthToken}`;
+            }
+            headers["x-device-id"] = options.deviceId || DEFAULTS.DEVICE_ID;
+            const payload = {};
+            payload[PAYLOAD_FIELDS.SERVICE_NAME] = serviceName;
+            payload[PAYLOAD_FIELDS.DOCUMENTATION_HTML] = htmlContent;
+
+            let published = false;
+            let lastError = null;
+            for (const baseUrl of portalUrls)
+            {
+                const targetUrl = baseUrl.replace(/\/$/, "") + portalEndpoint;
+                try
+                {
+                    const result = await PortalClient.postJson(targetUrl, payload, headers);
+                    this.logger.log(`Publish request to ${targetUrl} -> status ${result.statusCode}`);
+                    this.logger.log(`Publish response body: ${result.body}`);
+                    published = true;
+                    break;
+                }
+catch (err)
+                {
+                    this.logger.error(`Portal POST failed [${targetUrl}]:`, err.message || err);
+                    lastError = err;
+                }
+            }
+            if (!published && lastError)
+            {
+                this.logger.error("All portal publish attempts failed.", lastError.message || lastError);
+            }
+        }
+
         return output;
     }
 
@@ -58,7 +112,7 @@ class DocumentationApp
 
         if (!hasResponseInput)
         {
-            const requestValidator = createRequestValidator({ spec: openApiSpec });
+            const requestValidator = createRequestValidator( { spec: openApiSpec });
             const requestResult = requestValidator.validate(request);
             const endpointLabel = this.#formatEndpointLabel(requestResult.matchedEndpoint, request);
 
@@ -85,8 +139,8 @@ class DocumentationApp
         }
 
         const response = this.#readValidationResponse(options);
-        const contractValidator = createContractValidator({ spec: openApiSpec });
-        const contractResult = contractValidator.validate({ request, response });
+        const contractValidator = createContractValidator( { spec: openApiSpec });
+        const contractResult = contractValidator.validate( { request, response });
         const endpointLabel = this.#formatEndpointLabel(contractResult.matchedEndpoint, request);
 
         this.logger.log(
@@ -107,11 +161,11 @@ class DocumentationApp
         {
             this.logger.error("❌ Response validation skipped");
         }
-        else if (contractResult.responseValidation && contractResult.responseValidation.isValid)
+else if (contractResult.responseValidation && contractResult.responseValidation.isValid)
         {
             this.logger.log("✔ Response validation passed");
         }
-        else
+else
         {
             this.logger.error("❌ Response validation failed");
             this.#printErrors((contractResult.responseValidation && contractResult.responseValidation.errors) || []);
@@ -146,7 +200,7 @@ class DocumentationApp
             {
                 return JSON.parse(options.request);
             }
-            catch (error)
+catch (error)
             {
                 throw new Error("Invalid JSON in --request option.");
             }
@@ -164,7 +218,7 @@ class DocumentationApp
                 const raw = fs.readFileSync(options.requestFile, "utf8");
                 return JSON.parse(raw);
             }
-            catch (error)
+catch (error)
             {
                 throw new Error(`Invalid JSON in request file: ${options.requestFile}`);
             }
@@ -181,7 +235,7 @@ class DocumentationApp
             {
                 return JSON.parse(options.response);
             }
-            catch (error)
+catch (error)
             {
                 throw new Error("Invalid JSON in --response option.");
             }
@@ -199,7 +253,7 @@ class DocumentationApp
                 const raw = fs.readFileSync(options.responseFile, "utf8");
                 return JSON.parse(raw);
             }
-            catch (error)
+catch (error)
             {
                 throw new Error(`Invalid JSON in response file: ${options.responseFile}`);
             }

@@ -1,15 +1,17 @@
 const fs = require("fs");
 const path = require("path");
+const
+{ FILE_NAMES } = require("../constants");
 
 class DocsGenerator
 {
     generate(openApiSpec, options)
     {
-        const outputDir = path.resolve(options.outputDir || path.join(process.cwd(), "output"));
+        const outputDir = path.resolve(options.outputDir || path.join(process.cwd(), FILE_NAMES.DOCUMENTATION, ".."));
         fs.mkdirSync(outputDir, { recursive: true });
 
-        const jsonPath = path.join(outputDir, "openapi-spec.json");
-        const htmlPath = path.join(outputDir, "documentation.html");
+        const jsonPath = path.join(outputDir, FILE_NAMES.OPENAPI);
+        const htmlPath = path.join(outputDir, FILE_NAMES.DOCUMENTATION);
 
         fs.writeFileSync(jsonPath, JSON.stringify(openApiSpec, null, 2));
         fs.writeFileSync(htmlPath, this.#buildHtml(openApiSpec, options.title));
@@ -36,17 +38,20 @@ class DocsGenerator
     <style>
         html,
         body {
+
             margin: 0;
             padding: 0;
             background: #f6f8fb;
         }
 
         #swagger-ui {
+
             max-width: 1440px;
             margin: 0 auto;
         }
 
         .topbar {
+
             display: none;
         }
 
@@ -57,6 +62,7 @@ class DocsGenerator
         .try-out__btn,
         .opblock-execute,
         .opblock .execute {
+
             display: none !important;
         }
     </style>
@@ -67,8 +73,8 @@ class DocsGenerator
     <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
     <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
     <script>
-        window.onload = function ()
-        {
+        window.onload = function() {
+
             const spec = ${serializedSpec};
 
             window.ui = SwaggerUIBundle({

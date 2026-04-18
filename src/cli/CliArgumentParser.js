@@ -1,24 +1,31 @@
 const path = require("path");
+const
+{ PORTAL_URLS, PORTAL_ENDPOINTS, DEFAULTS } = require("../constants");
 
 class CliArgumentParser
 {
-    static #defaultOptions = Object.freeze({
+    static #defaultOptions = Object.freeze( {
         command: "generate",
         targetDir: process.cwd(),
         outputDir: path.join(process.cwd(), "output"),
         title: "API Documentation",
-        version: "1.0.0",
+        version: DEFAULTS.VERSION,
         description: "Auto-generated API documentation",
         request: "",
         requestFile: "",
         response: "",
         responseFile: "",
         showHelp: false,
-        showVersion: false
+        showVersion: false,
+        portalUrl: PORTAL_URLS[1], 
+        portalEndpoint: PORTAL_ENDPOINTS.PUBLISH_DOCUMENTATION_REQUEST,
+        portalAuthToken: "",
+        publishApproval: false,
+        serviceName: DEFAULTS.SERVICE_NAME
     });
 
-    constructor(defaultOptions = {})
-    {
+    constructor(defaultOptions = {}) {
+
         this.defaultOptions = {
             ...CliArgumentParser.#defaultOptions,
             ...defaultOptions
@@ -77,8 +84,8 @@ class CliArgumentParser
         return options;
     }
 
-    getProcessArguments(runtimeArgs = process.argv)
-    {
+    getProcessArguments(runtimeArgs = process.argv) {
+
         const args = Array.isArray(runtimeArgs) ? runtimeArgs.slice(1) : [];
 
         if (args.length === 0)
@@ -140,6 +147,21 @@ class CliArgumentParser
                 break;
             case "responseFile":
                 options.responseFile = value;
+                break;
+            case "portalUrl":
+                options.portalUrl = value;
+                break;
+            case "portalEndpoint":
+                options.portalEndpoint = value;
+                break;
+            case "portalAuthToken":
+                options.portalAuthToken = value;
+                break;
+            case "publishApproval":
+                options.publishApproval = (value === "true" || value === "1");
+                break;
+            case "serviceName":
+                options.serviceName = value;
                 break;
             default:
                 break;

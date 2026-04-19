@@ -5,7 +5,8 @@ class SchemaValidator
         this.refResolver = refResolver;
     }
 
-    validate(value, schema, fieldPath, errors, allowPrimitiveCoercion = false) {
+    validate(value, schema, fieldPath, errors, allowPrimitiveCoercion = false)
+    {
 
         const resolvedSchema = this.refResolver ? this.refResolver.resolveReferenceObject(schema) : schema;
 

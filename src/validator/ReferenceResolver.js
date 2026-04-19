@@ -1,6 +1,7 @@
 class ReferenceResolver
 {
-    constructor(openApiSpec = {}) {
+    constructor(openApiSpec = {})
+    {
 
         this.openApiSpec = openApiSpec;
     }

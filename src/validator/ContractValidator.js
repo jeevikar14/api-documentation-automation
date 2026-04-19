@@ -3,13 +3,15 @@ const ResponseValidator = require("./ResponseValidator");
 
 class ContractValidator
 {
-    constructor(openApiSpec = {}) {
+    constructor(openApiSpec = {})
+    {
 
         this.requestValidator = new RequestValidator(openApiSpec);
         this.responseValidator = new ResponseValidator(openApiSpec);
     }
 
-    validate(contractInput = {}) {
+    validate(contractInput = {})
+    {
 
         const request = contractInput.request;
         const response = contractInput.response;

@@ -6,7 +6,8 @@ const DEFAULT_SUPPORTED_EXTENSIONS = [".js", ".cjs", ".mjs"];
 
 class FileScanner
 {
-    constructor(options = {}) {
+    constructor(options = {})
+    {
 
         this.ignoredDirectories = new Set(options.ignoredDirectories || DEFAULT_IGNORED_DIRECTORIES);
         this.supportedExtensions = new Set(options.supportedExtensions || DEFAULT_SUPPORTED_EXTENSIONS);

@@ -3,7 +3,8 @@ const SchemaValidator = require("./SchemaValidator");
 
 class RequestValidator
 {
-    constructor(openApiSpec = {}) {
+    constructor(openApiSpec = {})
+    {
         this.openApiSpec = openApiSpec;
         this.refResolver = new ReferenceResolver(openApiSpec);
         this.schemaValidator = new SchemaValidator(this.refResolver);

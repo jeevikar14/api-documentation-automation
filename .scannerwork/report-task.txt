@@ -1,6 +1,0 @@
-projectKey=api-documentation-automation
-serverUrl=http://localhost:9000
-serverVersion=26.4.0.121862
-dashboardUrl=http://localhost:9000/dashboard?id=api-documentation-automation
-ceTaskId=0bcc926a-1c7f-418f-b9d5-af465392551f
-ceTaskUrl=http://localhost:9000/api/ce/task?id=0bcc926a-1c7f-418f-b9d5-af465392551f

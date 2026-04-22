@@ -1,4 +1,4 @@
-const ReferenceResolver = require("./ReferenceResolver");
+﻿const ReferenceResolver = require("./ReferenceResolver");
 const SchemaValidator = require("./SchemaValidator");
 
 class RequestValidator
@@ -206,20 +206,7 @@ class RequestValidator
                 continue;
             }
 
-            let value;
-
-            if (parameterIn === "path")
-            {
-                value = pathParams[parameterName];
-            }
-            else if (parameterIn === "query")
-            {
-                value = request.query[parameterName];
-            }
-            else if (parameterIn === "header")
-            {
-                value = request.headers[String(parameterName).toLowerCase()];
-            }
+            const value = this.#getParameterValue(resolvedParameter, request, pathParams);
 
             if (isRequired && value === undefined)
             {
@@ -233,6 +220,29 @@ class RequestValidator
                 this.schemaValidator.validate(value, schema, `${parameterIn}.${parameterName}`, errors, true);
             }
         }
+    }
+
+    #getParameterValue(resolvedParameter, request, pathParams)
+    {
+        const parameterName = resolvedParameter.name;
+        const parameterIn = resolvedParameter.in;
+
+        if (parameterIn === "path")
+        {
+            return pathParams[parameterName];
+        }
+
+        if (parameterIn === "query")
+        {
+            return request.query[parameterName];
+        }
+
+        if (parameterIn === "header")
+        {
+            return request.headers[String(parameterName).toLowerCase()];
+        }
+
+        return undefined;
     }
 
     #validateRequestBody(operation, requestBody, errors)

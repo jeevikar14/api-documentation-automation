@@ -196,7 +196,12 @@ class ResponseValidator
             errors.push(`No response definition found for status '${normalized.status}'.`);
             return;
         }
+        this.#validateResponseHeaders(responseDef, normalized, errors);
+        this.#validateResponseBody(responseDef, normalized, errors);
+    }
 
+    #validateResponseHeaders(responseDef, normalized, errors)
+    {
         const headersDef = responseDef.headers || {};
 
         for (const [headerName, headerSchemaObj] of Object.entries(headersDef))
@@ -216,7 +221,10 @@ class ResponseValidator
                 this.schemaValidator.validate(value, schema, `header.${headerName}`, errors, true);
             }
         }
+    }
 
+    #validateResponseBody(responseDef, normalized, errors)
+    {
         const content = responseDef.content || {};
         const jsonContent = content["application/json"] || content["application/*+json"];
 

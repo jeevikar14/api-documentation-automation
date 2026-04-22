@@ -145,50 +145,59 @@ class SchemaValidator
         {
             const asText = String(value);
 
-            if (typeof schema.minLength === "number" && asText.length < schema.minLength)
-            {
-                errors.push(`${fieldPath} must be at least ${schema.minLength} characters long.`);
-            }
-
-            if (typeof schema.maxLength === "number" && asText.length > schema.maxLength)
-            {
-                errors.push(`${fieldPath} must be at most ${schema.maxLength} characters long.`);
-            }
-
-            if (schema.pattern)
-            {
-                const pattern = new RegExp(schema.pattern);
-
-                if (!pattern.test(asText))
-                {
-                    errors.push(`${fieldPath} does not match required pattern.`);
-                }
-            }
-
-            if (schema.format === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(asText))
-            {
-                errors.push(`${fieldPath} must be a valid email.`);
-            }
+            this.#validateStringConstraints(asText, schema, fieldPath, errors);
         }
 
         if (expectedType === "number" || expectedType === "integer")
         {
             const numericValue = Number(value);
+            this.#validateNumberConstraints(numericValue, schema, fieldPath, errors, expectedType);
+        }
+    }
 
-            if (expectedType === "integer" && !Number.isInteger(numericValue))
-            {
-                errors.push(`${fieldPath} must be an integer.`);
-            }
+    #validateStringConstraints(asText, schema, fieldPath, errors)
+    {
+        if (typeof schema.minLength === "number" && asText.length < schema.minLength)
+        {
+            errors.push(`${fieldPath} must be at least ${schema.minLength} characters long.`);
+        }
 
-            if (typeof schema.minimum === "number" && numericValue < schema.minimum)
-            {
-                errors.push(`${fieldPath} must be >= ${schema.minimum}.`);
-            }
+        if (typeof schema.maxLength === "number" && asText.length > schema.maxLength)
+        {
+            errors.push(`${fieldPath} must be at most ${schema.maxLength} characters long.`);
+        }
 
-            if (typeof schema.maximum === "number" && numericValue > schema.maximum)
+        if (schema.pattern)
+        {
+            const pattern = new RegExp(schema.pattern);
+
+            if (!pattern.test(asText))
             {
-                errors.push(`${fieldPath} must be <= ${schema.maximum}.`);
+                errors.push(`${fieldPath} does not match required pattern.`);
             }
+        }
+
+        if (schema.format === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(asText))
+        {
+            errors.push(`${fieldPath} must be a valid email.`);
+        }
+    }
+
+    #validateNumberConstraints(numericValue, schema, fieldPath, errors, expectedType)
+    {
+        if (expectedType === "integer" && !Number.isInteger(numericValue))
+        {
+            errors.push(`${fieldPath} must be an integer.`);
+        }
+
+        if (typeof schema.minimum === "number" && numericValue < schema.minimum)
+        {
+            errors.push(`${fieldPath} must be >= ${schema.minimum}.`);
+        }
+
+        if (typeof schema.maximum === "number" && numericValue > schema.maximum)
+        {
+            errors.push(`${fieldPath} must be <= ${schema.maximum}.`);
         }
     }
 

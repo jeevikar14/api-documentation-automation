@@ -64,46 +64,51 @@ class DocumentationApp
                 if (!portalUrls.includes(url)) portalUrls.push(url);
             }
 
-            const portalEndpoint = options.portalEndpoint || PORTAL_ENDPOINTS.PUBLISH_DOCUMENTATION_REQUEST;
-            const serviceName = options.serviceName || packageJson.name || options.title || DEFAULTS.SERVICE_NAME;
-            const version = options.version || DEFAULTS.VERSION;
-            const htmlContent = fs.readFileSync(output.htmlPath, "utf8");
-            const headers = {};
-            if (options.portalAuthToken)
-            {
-                headers.Authorization = `Bearer ${options.portalAuthToken}`;
-            }
-            headers["x-device-id"] = options.deviceId || DEFAULTS.DEVICE_ID;
-            const payload = {};
-            payload[PAYLOAD_FIELDS.SERVICE_NAME] = serviceName;
-            payload[PAYLOAD_FIELDS.DOCUMENTATION_HTML] = htmlContent;
-
-            let published = false;
-            let lastError = null;
-            for (const baseUrl of portalUrls)
-            {
-                const targetUrl = baseUrl.replace(/\/$/, "") + portalEndpoint;
-                try
-                {
-                    const result = await PortalClient.postJson(targetUrl, payload, headers);
-                    this.logger.log(`Publish request to ${targetUrl} -> status ${result.statusCode}`);
-                    this.logger.log(`Publish response body: ${result.body}`);
-                    published = true;
-                    break;
-                }
-catch (err)
-                {
-                    this.logger.error(`Portal POST failed [${targetUrl}]:`, err.message || err);
-                    lastError = err;
-                }
-            }
-            if (!published && lastError)
-            {
-                this.logger.error("All portal publish attempts failed.", lastError.message || lastError);
-            }
+            await this.#publishDocumentation(output, options, portalUrls);
         }
 
         return output;
+    }
+
+    async #publishDocumentation(output, options, portalUrls)
+    {
+        const portalEndpoint = options.portalEndpoint || PORTAL_ENDPOINTS.PUBLISH_DOCUMENTATION_REQUEST;
+        const serviceName = options.serviceName || packageJson.name || options.title || DEFAULTS.SERVICE_NAME;
+        const htmlContent = fs.readFileSync(output.htmlPath, "utf8");
+        const headers = {};
+        if (options.portalAuthToken)
+        {
+            headers.Authorization = `Bearer ${options.portalAuthToken}`;
+        }
+        headers["x-device-id"] = options.deviceId || DEFAULTS.DEVICE_ID;
+        const payload = {};
+        payload[PAYLOAD_FIELDS.SERVICE_NAME] = serviceName;
+        payload[PAYLOAD_FIELDS.DOCUMENTATION_HTML] = htmlContent;
+
+        let published = false;
+        let lastError = null;
+        for (const baseUrl of portalUrls)
+        {
+            const targetUrl = baseUrl.replace(/\/$/, "") + portalEndpoint;
+            try
+            {
+                const result = await PortalClient.postJson(targetUrl, payload, headers);
+                this.logger.log(`Publish request to ${targetUrl} -> status ${result.statusCode}`);
+                this.logger.log(`Publish response body: ${result.body}`);
+                published = true;
+                break;
+            }
+            catch (err)
+            {
+                this.logger.error(`Portal POST failed [${targetUrl}]:`, err.message || err);
+                lastError = err;
+            }
+        }
+
+        if (!published && lastError)
+        {
+            this.logger.error("All portal publish attempts failed.", lastError.message || lastError);
+        }
     }
 
     #runValidation(openApiSpec, options)

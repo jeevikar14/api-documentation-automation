@@ -177,7 +177,7 @@ class SchemaValidator
             }
         }
 
-        if (schema.format === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(asText))
+        if (schema.format === "email" && !this.#isValidEmail(asText))
         {
             errors.push(`${fieldPath} must be a valid email.`);
         }
@@ -235,7 +235,7 @@ class SchemaValidator
                 return true;
             }
 
-            return allowPrimitiveCoercion && /^-?\d+$/.test(String(value));
+            return allowPrimitiveCoercion && this.#isIntegerString(String(value));
         }
 
         return true;
@@ -244,6 +244,60 @@ class SchemaValidator
     #isPlainObject(value)
     {
         return typeof value === "object" && value !== null && !Array.isArray(value);
+    }
+
+    #isIntegerString(value)
+    {
+        if (!value)
+        {
+            return false;
+        }
+
+        let index = 0;
+
+        if (value[0] === "-")
+        {
+            if (value.length === 1)
+            {
+                return false;
+            }
+
+            index = 1;
+        }
+
+        for (; index < value.length; index += 1)
+        {
+            const code = value.charCodeAt(index);
+
+            if (code < 48 || code > 57)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    #isValidEmail(value)
+    {
+        const atIndex = value.indexOf("@");
+
+        if (atIndex <= 0 || atIndex !== value.lastIndexOf("@"))
+        {
+            return false;
+        }
+
+        const localPart = value.slice(0, atIndex);
+        const domainPart = value.slice(atIndex + 1);
+
+        if (!localPart || !domainPart)
+        {
+            return false;
+        }
+
+        const dotIndex = domainPart.indexOf(".");
+
+        return dotIndex > 0 && dotIndex < domainPart.length - 1;
     }
 }
 

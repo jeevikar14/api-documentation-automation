@@ -120,8 +120,14 @@ class RequestValidator
             return "/";
         }
 
-        const withLeadingSlash = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
-        return withLeadingSlash.replace(/\/+$/, "") || "/";
+        let normalized = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+
+        while (normalized.length > 1 && normalized.endsWith("/"))
+        {
+            normalized = normalized.slice(0, -1);
+        }
+
+        return normalized;
     }
 
     #matchPath(requestPath)
@@ -145,11 +151,10 @@ class RequestValidator
             {
                 const templateSegment = templateSegments[index];
                 const requestSegment = requestSegments[index];
-                const templateMatch = templateSegment.match(/^\{(.+)\}$/);
-
-                if (templateMatch)
+                if (templateSegment.startsWith("{") && templateSegment.endsWith("}") && templateSegment.length > 2)
                 {
-                    pathParams[templateMatch[1]] = requestSegment;
+                    const paramName = templateSegment.slice(1, -1);
+                    pathParams[paramName] = requestSegment;
                     continue;
                 }
 
